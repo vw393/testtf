@@ -7,14 +7,14 @@ module "oracledb_server" { #tfsec:ignore:AWS079
   iam_instance_profile = aws_iam_instance_profile.instance_profile.id
 
   user_data_base64 = base64encode(templatefile(
-    "${path.module}/templates/user_data.tpl",
+    "${path.module}/../templates/user_data.tpl",
     {
       fqdn       = var.fqdn
       ssh_keys   = join(",", [for k, v in var.ssh_pubkeys : v])
       login_name = var.login_name
       json_pvs   = jsonencode({ for j, pv in local.lvm_pvs : format("%s-%s", local.lvm_pvs[j].vg_name, local.lvm_pvs[j].pv_name) => pv })
       json_lvs   = jsonencode(var.lvm_lvs)
-      lvm_setup  = filebase64("${path.module}/templates/configure-lvm.sh")
+      lvm_setup  = filebase64("${path.module}/../templates/configure-lvm.sh")
     }
   ))
 
